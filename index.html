@@ -14,6 +14,7 @@
     
     <script type="text/babel">
         const { useState, useEffect } = React;
+        const { render } = ReactDOM;
 
         const analyzeJob = (job, profile) => {
             const title = job.title.toLowerCase();
@@ -780,7 +781,8 @@ ${finalScore >= 76 ? 'VERY HIGH RISK: 60-80%+ tasks automated by 2030. Immediate
             );
         }
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
