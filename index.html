@@ -93,7 +93,8 @@
             // MEDIUM RISK - Scientific/Research (varies by specialization)
             else if (title.match(/scientist|researcher|analyst|chemist|physicist|biologist|geologist|technologist/)) {
                 taskComp.routineCog = 30; taskComp.routineMan = 10; taskComp.nonRoutineCog = 75; taskComp.nonRoutineMan = 20;
-            // DEFAULT - Mixed Tasks (Use job description to differentiate)
+            }
+                // DEFAULT - Mixed Tasks (Use job description to differentiate)
 else {
     // Analyze job title for keywords to assign more varied scores
     if (title.match(/supervisor|foreman|inspector|examiner/)) {
