@@ -93,11 +93,28 @@
             // MEDIUM RISK - Scientific/Research (varies by specialization)
             else if (title.match(/scientist|researcher|analyst|chemist|physicist|biologist|geologist|technologist/)) {
                 taskComp.routineCog = 30; taskComp.routineMan = 10; taskComp.nonRoutineCog = 75; taskComp.nonRoutineMan = 20;
-            }
-            // DEFAULT - Mixed Tasks
-            else {
-                taskComp.routineCog = 40; taskComp.routineMan = 30; taskComp.nonRoutineCog = 50; taskComp.nonRoutineMan = 40;
-            }
+            // DEFAULT - Mixed Tasks (Use job description to differentiate)
+else {
+    // Analyze job title for keywords to assign more varied scores
+    if (title.match(/supervisor|foreman|inspector|examiner/)) {
+        taskComp.routineCog = 38; taskComp.routineMan = 42; taskComp.nonRoutineCog = 55; taskComp.nonRoutineMan = 48;
+    }
+    else if (title.match(/assistant|helper|attendant|operator/)) {
+        taskComp.routineCog = 52; taskComp.routineMan = 58; taskComp.nonRoutineCog = 32; taskComp.nonRoutineMan = 35;
+    }
+    else if (title.match(/technician|specialist|analyst/)) {
+        taskComp.routineCog = 35; taskComp.routineMan = 28; taskComp.nonRoutineCog = 62; taskComp.nonRoutineMan = 42;
+    }
+    else if (title.match(/consultant|advisor|expert/)) {
+        taskComp.routineCog = 28; taskComp.routineMan = 15; taskComp.nonRoutineCog = 72; taskComp.nonRoutineMan = 25;
+    }
+    else if (title.match(/officer|official|administrator/)) {
+        taskComp.routineCog = 48; taskComp.routineMan = 22; taskComp.nonRoutineCog = 48; taskComp.nonRoutineMan = 28;
+    }
+    else {
+        taskComp.routineCog = 45; taskComp.routineMan = 35; taskComp.nonRoutineCog = 45; taskComp.nonRoutineMan = 38;
+    }
+}
             
             // BOTTLENECKS
             const bottlenecks = {
