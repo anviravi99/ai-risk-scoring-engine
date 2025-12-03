@@ -116,17 +116,32 @@ else {
     }
 }
             
-            // BOTTLENECKS
-            const bottlenecks = {
-                perception: { score: (100 - taskComp.nonRoutineMan), weight: 0.28 },
-                creativity: { score: (100 - taskComp.nonRoutineCog), weight: 0.42 },
-                social: { score: (title.includes('nurse') || title.includes('teacher')) ? 20 : (title.includes('customer')) ? 45 : 75, weight: 0.30 }
-            };
-            
-            let baseProb = 0;
-            for (let k in bottlenecks) baseProb += bottlenecks[k].score * bottlenecks[k].weight;
-            
-            const wefAdjusted = baseProb * 0.86;
+            // BOTTLENECKS - Use task composition directly for more variation
+const bottlenecks = {
+    perception: { score: (100 - taskComp.nonRoutineMan), weight: 0.28 },
+    creativity: { score: (100 - taskComp.nonRoutineCog), weight: 0.42 },
+    social: { 
+        score: title.match(/nurse|therapist|counselor|teacher|social worker|clergy/) ? 15 :
+               title.match(/doctor|physician|psychologist/) ? 18 :
+               title.match(/manager|executive|director|sales.*manager/) ? 25 :
+               title.match(/customer service|sales assistant|waiter|receptionist/) ? 45 :
+               title.match(/hairdresser|chef|personal/) ? 30 :
+               title.match(/lawyer|consultant|advisor/) ? 35 :
+               title.match(/data entry|clerk|assembler|packer/) ? 85 :
+               title.match(/driver|operator|machinist/) ? 65 : 
+               title.match(/scientist|researcher|engineer/) ? 28 :
+               title.match(/artist|designer|writer/) ? 25 :
+               title.match(/supervisor|inspector/) ? 50 : 58,
+        weight: 0.30 
+    }
+};
+
+// DIRECT calculation from task composition - more varied results
+const routineScore = (taskComp.routineCog * 0.5) + (taskComp.routineMan * 0.3);
+const nonRoutineScore = (taskComp.nonRoutineCog * 0.4) + (taskComp.nonRoutineMan * 0.25);
+const baseProb = routineScore - (nonRoutineScore * 0.5) + (bottlenecks.social.score * 0.25);
+
+const wefAdjusted = baseProb * 0.86;
             
             // PERSONAL MODIFIERS
             const mods = { edu: 1.0, age: 1.0, exp: 1.0, level: 1.0, eduPts: 0, agePts: 0, expPts: 0, levelPts: 0 };
