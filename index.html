@@ -17,18 +17,86 @@
 
         const analyzeJob = (job, profile) => {
             const title = job.title.toLowerCase();
+            const desc = job.description.toLowerCase();
             
-            // TASK COMPOSITION
+            // COMPREHENSIVE JOB CLASSIFICATION (Based on Frey & Osborne + WEF 2025)
             const taskComp = { routineCog: 0, routineMan: 0, nonRoutineCog: 0, nonRoutineMan: 0 };
             
-            if (title.includes('data entry') || title.includes('operator') || title.includes('clerk')) {
-                taskComp.routineCog = 85; taskComp.routineMan = 30; taskComp.nonRoutineCog = 10; taskComp.nonRoutineMan = 5;
-            } else if (title.includes('designer') || title.includes('accountant') || title.includes('customer')) {
-                taskComp.routineCog = 55; taskComp.routineMan = 20; taskComp.nonRoutineCog = 45; taskComp.nonRoutineMan = 15;
-            } else if (title.includes('mechanic') || title.includes('driver') || title.includes('developer')) {
-                taskComp.routineCog = 35; taskComp.routineMan = 40; taskComp.nonRoutineCog = 60; taskComp.nonRoutineMan = 65;
-            } else {
-                taskComp.routineCog = 15; taskComp.routineMan = 10; taskComp.nonRoutineCog = 80; taskComp.nonRoutineMan = 70;
+            // VERY HIGH RISK - Routine Cognitive (Frey & Osborne: 90%+ automation)
+            if (title.match(/data entry|typist|clerk|filing|records|bookkeeping|payroll|teller|cashier|receptionist|telephone operator|switch|ticket|reservation/)) {
+                taskComp.routineCog = 90; taskComp.routineMan = 25; taskComp.nonRoutineCog = 5; taskComp.nonRoutineMan = 5;
+            }
+            // VERY HIGH RISK - Routine Manual (Frey & Osborne: 85%+ automation)
+            else if (title.match(/assembler|packer|sorter|production line|factory worker|warehouse|stock clerk|loader|material handler/)) {
+                taskComp.routineCog = 35; taskComp.routineMan = 85; taskComp.nonRoutineCog = 10; taskComp.nonRoutineMan = 15;
+            }
+            // HIGH RISK - Administrative/Back Office (WEF 2025: Declining)
+            else if (title.match(/administrative|office|secretary|assistant|coordinator|scheduler|dispatcher|billing|accounting clerk|audit clerk/)) {
+                taskComp.routineCog = 75; taskComp.routineMan = 20; taskComp.nonRoutineCog = 20; taskComp.nonRoutineMan = 10;
+            }
+            // HIGH RISK - Retail/Sales Support (OECD 2023: 60-70% automation)
+            else if (title.match(/sales assistant|shop|retail|store|counter|cashier|vendor|stall|market/)) {
+                taskComp.routineCog = 60; taskComp.routineMan = 30; taskComp.nonRoutineCog = 25; taskComp.nonRoutineMan = 20;
+            }
+            // HIGH-MEDIUM RISK - Customer Service (McKinsey: 50-60% task automation)
+            else if (title.match(/customer service|call center|support|helpdesk|inquiry|information|complaint/)) {
+                taskComp.routineCog = 65; taskComp.routineMan = 15; taskComp.nonRoutineCog = 30; taskComp.nonRoutineMan = 10;
+            }
+            // MEDIUM-HIGH RISK - Financial Services (WEF: Transformation)
+            else if (title.match(/accountant|auditor|bookkeeper|financial|tax|insurance agent|loan|credit/)) {
+                taskComp.routineCog = 55; taskComp.routineMan = 10; taskComp.nonRoutineCog = 40; taskComp.nonRoutineMan = 5;
+            }
+            // MEDIUM RISK - Skilled Trades (OECD: 35-45% automation)
+            else if (title.match(/mechanic|electrician|plumber|carpenter|welder|fitter|technician|maintenance|repair|installer/)) {
+                taskComp.routineCog = 30; taskComp.routineMan = 45; taskComp.nonRoutineCog = 50; taskComp.nonRoutineMan = 60;
+            }
+            // MEDIUM RISK - Transport/Logistics (Frey & Osborne: 40-60% by 2030)
+            else if (title.match(/driver|pilot|conductor|transport|delivery|logistics|dispatcher|traffic/)) {
+                taskComp.routineCog = 45; taskComp.routineMan = 50; taskComp.nonRoutineCog = 30; taskComp.nonRoutineMan = 40;
+            }
+            // MEDIUM-LOW RISK - Creative/Design (WEF: Growing with AI augmentation)
+            else if (title.match(/designer|artist|architect|photographer|illustrator|creative|fashion|interior|graphic/)) {
+                taskComp.routineCog = 35; taskComp.routineMan = 10; taskComp.nonRoutineCog = 70; taskComp.nonRoutineMan = 20;
+            }
+            // MEDIUM-LOW RISK - IT/Software (McKinsey: Augmentation not replacement)
+            else if (title.match(/software|developer|programmer|engineer|analyst|data|IT|computer|web|system|network|database/)) {
+                taskComp.routineCog = 30; taskComp.routineMan = 5; taskComp.nonRoutineCog = 75; taskComp.nonRoutineMan = 10;
+            }
+            // LOW-MEDIUM RISK - Management/Strategy (OECD: 20-30% automation)
+            else if (title.match(/manager|director|supervisor|coordinator|executive|administrator|chief|head|leader/)) {
+                taskComp.routineCog = 25; taskComp.routineMan = 5; taskComp.nonRoutineCog = 75; taskComp.nonRoutineMan = 15;
+            }
+            // LOW RISK - Healthcare (WEF 2025: Fastest growing)
+            else if (title.match(/doctor|physician|nurse|therapist|medical|health|dental|surgeon|midwife|paramedic|care worker/)) {
+                taskComp.routineCog = 20; taskComp.routineMan = 15; taskComp.nonRoutineCog = 70; taskComp.nonRoutineMan = 75;
+            }
+            // LOW RISK - Education (Frey & Osborne: <5% automation)
+            else if (title.match(/teacher|professor|instructor|educator|tutor|trainer|lecturer|coach/)) {
+                taskComp.routineCog = 15; taskComp.routineMan = 5; taskComp.nonRoutineCog = 85; taskComp.nonRoutineMan = 70;
+            }
+            // LOW RISK - Legal/High-level Professional (OECD: <15% automation)
+            else if (title.match(/lawyer|judge|legal|attorney|advocate|consultant|advisor|specialist|expert/)) {
+                taskComp.routineCog = 20; taskComp.routineMan = 5; taskComp.nonRoutineCog = 85; taskComp.nonRoutineMan = 15;
+            }
+            // LOW RISK - Arts/Entertainment (WEF: Human-centric)
+            else if (title.match(/musician|actor|performer|artist|writer|journalist|editor|producer|director|choreographer/)) {
+                taskComp.routineCog = 10; taskComp.routineMan = 10; taskComp.nonRoutineCog = 90; taskComp.nonRoutineMan = 60;
+            }
+            // LOW RISK - Personal Services (McKinsey: High human interaction)
+            else if (title.match(/hairdresser|beautician|chef|cook|waiter|barber|stylist|massage|personal|caregiver/)) {
+                taskComp.routineCog = 20; taskComp.routineMan = 30; taskComp.nonRoutineCog = 60; taskComp.nonRoutineMan = 70;
+            }
+            // LOW RISK - Emergency/Protective Services
+            else if (title.match(/police|fire|security|guard|military|safety|emergency|rescue/)) {
+                taskComp.routineCog = 25; taskComp.routineMan = 35; taskComp.nonRoutineCog = 65; taskComp.nonRoutineMan = 75;
+            }
+            // MEDIUM RISK - Scientific/Research (varies by specialization)
+            else if (title.match(/scientist|researcher|analyst|chemist|physicist|biologist|geologist|technologist/)) {
+                taskComp.routineCog = 30; taskComp.routineMan = 10; taskComp.nonRoutineCog = 75; taskComp.nonRoutineMan = 20;
+            }
+            // DEFAULT - Mixed Tasks
+            else {
+                taskComp.routineCog = 40; taskComp.routineMan = 30; taskComp.nonRoutineCog = 50; taskComp.nonRoutineMan = 40;
             }
             
             // BOTTLENECKS
@@ -284,8 +352,8 @@ ${finalScore >= 76 ? 'VERY HIGH RISK: 60-80%+ tasks automated by 2030. Immediate
                                             className={`text-left p-4 rounded-xl border-2 transition-all ${
                                                 selectedJob?.code === job.code ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-purple-300'
                                             }`}>
-                                            <div className="font-semibold text-gray-800">[{job.code}] {job.title}</div>
-                                            <div className="text-sm text-gray-600 mt-1">{job.description.substring(0, 100)}...</div>
+                                            <div className="font-semibold text-gray-800">{job.title}</div>
+                                            <div className="text-sm text-gray-600 mt-1">{job.description.substring(0, 120)}...</div>
                                         </button>
                                     ))
                                 )}
