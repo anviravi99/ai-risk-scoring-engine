@@ -20,100 +20,254 @@
             const desc = job.description.toLowerCase();
             
             // COMPREHENSIVE JOB CLASSIFICATION (Based on Frey & Osborne + WEF 2025)
-            const taskComp = { routineCog: 0, routineMan: 0, nonRoutineCog: 0, nonRoutineMan: 0 };
-            
-            // VERY HIGH RISK - Routine Cognitive (Frey & Osborne: 90%+ automation)
-            if (title.match(/data entry|typist|clerk|filing|records|bookkeeping|payroll|teller|cashier|receptionist|telephone operator|switch|ticket|reservation/)) {
-                taskComp.routineCog = 90; taskComp.routineMan = 25; taskComp.nonRoutineCog = 5; taskComp.nonRoutineMan = 5;
-            }
-            // VERY HIGH RISK - Routine Manual (Frey & Osborne: 85%+ automation)
-            else if (title.match(/assembler|packer|sorter|production line|factory worker|warehouse|stock clerk|loader|material handler/)) {
-                taskComp.routineCog = 35; taskComp.routineMan = 85; taskComp.nonRoutineCog = 10; taskComp.nonRoutineMan = 15;
-            }
-            // HIGH RISK - Administrative/Back Office (WEF 2025: Declining)
-            else if (title.match(/administrative|office|secretary|assistant|coordinator|scheduler|dispatcher|billing|accounting clerk|audit clerk/)) {
-                taskComp.routineCog = 75; taskComp.routineMan = 20; taskComp.nonRoutineCog = 20; taskComp.nonRoutineMan = 10;
-            }
-            // HIGH RISK - Retail/Sales Support (OECD 2023: 60-70% automation)
-            else if (title.match(/sales assistant|shop|retail|store|counter|cashier|vendor|stall|market/)) {
-                taskComp.routineCog = 60; taskComp.routineMan = 30; taskComp.nonRoutineCog = 25; taskComp.nonRoutineMan = 20;
-            }
-            // HIGH-MEDIUM RISK - Customer Service (McKinsey: 50-60% task automation)
-            else if (title.match(/customer service|call center|support|helpdesk|inquiry|information|complaint/)) {
-                taskComp.routineCog = 65; taskComp.routineMan = 15; taskComp.nonRoutineCog = 30; taskComp.nonRoutineMan = 10;
-            }
-            // MEDIUM-HIGH RISK - Financial Services (WEF: Transformation)
-            else if (title.match(/accountant|auditor|bookkeeper|financial|tax|insurance agent|loan|credit/)) {
-                taskComp.routineCog = 55; taskComp.routineMan = 10; taskComp.nonRoutineCog = 40; taskComp.nonRoutineMan = 5;
-            }
-            // MEDIUM RISK - Skilled Trades (OECD: 35-45% automation)
-            else if (title.match(/mechanic|electrician|plumber|carpenter|welder|fitter|technician|maintenance|repair|installer/)) {
-                taskComp.routineCog = 30; taskComp.routineMan = 45; taskComp.nonRoutineCog = 50; taskComp.nonRoutineMan = 60;
-            }
-            // MEDIUM RISK - Transport/Logistics (Frey & Osborne: 40-60% by 2030)
-            else if (title.match(/driver|pilot|conductor|transport|delivery|logistics|dispatcher|traffic/)) {
-                taskComp.routineCog = 45; taskComp.routineMan = 50; taskComp.nonRoutineCog = 30; taskComp.nonRoutineMan = 40;
-            }
-            // MEDIUM-LOW RISK - Creative/Design (WEF: Growing with AI augmentation)
-            else if (title.match(/designer|artist|architect|photographer|illustrator|creative|fashion|interior|graphic/)) {
-                taskComp.routineCog = 35; taskComp.routineMan = 10; taskComp.nonRoutineCog = 70; taskComp.nonRoutineMan = 20;
-            }
-            // MEDIUM-LOW RISK - IT/Software (McKinsey: Augmentation not replacement)
-            else if (title.match(/software|developer|programmer|engineer|analyst|data|IT|computer|web|system|network|database/)) {
-                taskComp.routineCog = 30; taskComp.routineMan = 5; taskComp.nonRoutineCog = 75; taskComp.nonRoutineMan = 10;
-            }
-            // LOW-MEDIUM RISK - Management/Strategy (OECD: 20-30% automation)
-            else if (title.match(/manager|director|supervisor|coordinator|executive|administrator|chief|head|leader/)) {
-                taskComp.routineCog = 25; taskComp.routineMan = 5; taskComp.nonRoutineCog = 75; taskComp.nonRoutineMan = 15;
-            }
-            // LOW RISK - Healthcare (WEF 2025: Fastest growing)
-            else if (title.match(/doctor|physician|nurse|therapist|medical|health|dental|surgeon|midwife|paramedic|care worker/)) {
-                taskComp.routineCog = 20; taskComp.routineMan = 15; taskComp.nonRoutineCog = 70; taskComp.nonRoutineMan = 75;
-            }
-            // LOW RISK - Education (Frey & Osborne: <5% automation)
-            else if (title.match(/teacher|professor|instructor|educator|tutor|trainer|lecturer|coach/)) {
-                taskComp.routineCog = 15; taskComp.routineMan = 5; taskComp.nonRoutineCog = 85; taskComp.nonRoutineMan = 70;
-            }
-            // LOW RISK - Legal/High-level Professional (OECD: <15% automation)
-            else if (title.match(/lawyer|judge|legal|attorney|advocate|consultant|advisor|specialist|expert/)) {
-                taskComp.routineCog = 20; taskComp.routineMan = 5; taskComp.nonRoutineCog = 85; taskComp.nonRoutineMan = 15;
-            }
-            // LOW RISK - Arts/Entertainment (WEF: Human-centric)
-            else if (title.match(/musician|actor|performer|artist|writer|journalist|editor|producer|director|choreographer/)) {
-                taskComp.routineCog = 10; taskComp.routineMan = 10; taskComp.nonRoutineCog = 90; taskComp.nonRoutineMan = 60;
-            }
-            // LOW RISK - Personal Services (McKinsey: High human interaction)
-            else if (title.match(/hairdresser|beautician|chef|cook|waiter|barber|stylist|massage|personal|caregiver/)) {
-                taskComp.routineCog = 20; taskComp.routineMan = 30; taskComp.nonRoutineCog = 60; taskComp.nonRoutineMan = 70;
-            }
-            // LOW RISK - Emergency/Protective Services
-            else if (title.match(/police|fire|security|guard|military|safety|emergency|rescue/)) {
-                taskComp.routineCog = 25; taskComp.routineMan = 35; taskComp.nonRoutineCog = 65; taskComp.nonRoutineMan = 75;
-            }
-            // MEDIUM RISK - Scientific/Research (varies by specialization)
-else if (title.match(/scientist|researcher|analyst|chemist|physicist|biologist|geologist|technologist/)) {
-    taskComp.routineCog = 30; taskComp.routineMan = 10; taskComp.nonRoutineCog = 75; taskComp.nonRoutineMan = 20;
+const taskComp = { routineCog: 0, routineMan: 0, nonRoutineCog: 0, nonRoutineMan: 0 };
+
+// VERY HIGH RISK - Data Entry & Clerical (Frey & Osborne: 94-98% automation)
+if (title.match(/data entry|typist|word processor|file clerk|records clerk/)) {
+    taskComp.routineCog = 96; taskComp.routineMan = 18; taskComp.nonRoutineCog = 3; taskComp.nonRoutineMan = 2;
 }
-    // DEFAULT - Mixed Tasks (Use job description to differentiate)
+// VERY HIGH RISK - Telemarketers (Frey & Osborne: 99% automation)
+else if (title.match(/telemarketer|telephone sales/)) {
+    taskComp.routineCog = 94; taskComp.routineMan = 15; taskComp.nonRoutineCog = 4; taskComp.nonRoutineMan = 2;
+}
+// VERY HIGH RISK - Bookkeeping/Payroll Clerks (Frey & Osborne: 97-98% automation)
+else if (title.match(/bookkeeping.*clerk|payroll.*clerk|billing.*clerk|accounting.*clerk/)) {
+    taskComp.routineCog = 92; taskComp.routineMan = 12; taskComp.nonRoutineCog = 6; taskComp.nonRoutineMan = 3;
+}
+// VERY HIGH RISK - Bank Tellers (Frey & Osborne: 98% automation)
+else if (title.match(/\bteller\b|bank.*teller/)) {
+    taskComp.routineCog = 90; taskComp.routineMan = 20; taskComp.nonRoutineCog = 7; taskComp.nonRoutineMan = 5;
+}
+// VERY HIGH RISK - Cashiers (Frey & Osborne: 97% automation)
+else if (title.match(/\bcashier\b|checkout.*operator/)) {
+    taskComp.routineCog = 88; taskComp.routineMan = 28; taskComp.nonRoutineCog = 8; taskComp.nonRoutineMan = 10;
+}
+// VERY HIGH RISK - Loan Officers (Frey & Osborne: 98% automation)
+else if (title.match(/loan.*officer|credit.*officer|mortgage.*broker/)) {
+    taskComp.routineCog = 86; taskComp.routineMan = 8; taskComp.nonRoutineCog = 12; taskComp.nonRoutineMan = 4;
+}
+// VERY HIGH RISK - Insurance Underwriters (Frey & Osborne: 99% automation)
+else if (title.match(/insurance.*underwriter|underwriting/)) {
+    taskComp.routineCog = 88; taskComp.routineMan = 6; taskComp.nonRoutineCog = 10; taskComp.nonRoutineMan = 3;
+}
+// VERY HIGH RISK - Tax Preparers (Frey & Osborne: 99% automation)
+else if (title.match(/tax.*preparer|tax.*examiner/)) {
+    taskComp.routineCog = 90; taskComp.routineMan = 8; taskComp.nonRoutineCog = 8; taskComp.nonRoutineMan = 2;
+}
+// VERY HIGH RISK - Receptionists (Frey & Osborne: 96% automation)
+else if (title.match(/receptionist|front.*desk|telephone.*operator/)) {
+    taskComp.routineCog = 84; taskComp.routineMan = 16; taskComp.nonRoutineCog = 12; taskComp.nonRoutineMan = 8;
+}
+// VERY HIGH RISK - Switchboard Operators (Frey & Osborne: 99% automation)
+else if (title.match(/switchboard|telephone.*exchange/)) {
+    taskComp.routineCog = 92; taskComp.routineMan = 15; taskComp.nonRoutineCog = 4; taskComp.nonRoutineMan = 3;
+}
+// VERY HIGH RISK - Assembly Line Workers (Frey & Osborne: 90-94% automation)
+else if (title.match(/assembler|assembly.*line|production.*line.*worker/)) {
+    taskComp.routineCog = 25; taskComp.routineMan = 92; taskComp.nonRoutineCog = 8; taskComp.nonRoutineMan = 10;
+}
+// VERY HIGH RISK - Packers/Sorters (Frey & Osborne: 85-90% automation)
+else if (title.match(/packer|packager|sorter|order.*picker/)) {
+    taskComp.routineCog = 28; taskComp.routineMan = 88; taskComp.nonRoutineCog = 10; taskComp.nonRoutineMan = 12;
+}
+// HIGH RISK - Accountants (Frey & Osborne: 94% automation)
+else if (title.match(/\baccountant\b|accounts.*officer/)) {
+    taskComp.routineCog = 72; taskComp.routineMan = 8; taskComp.nonRoutineCog = 24; taskComp.nonRoutineMan = 5;
+}
+// HIGH RISK - Auditors (Frey & Osborne: 94% automation)
+else if (title.match(/\bauditor\b|audit.*officer|internal.*audit/)) {
+    taskComp.routineCog = 68; taskComp.routineMan = 8; taskComp.nonRoutineCog = 28; taskComp.nonRoutineMan = 6;
+}
+// HIGH RISK - Insurance Agents (Frey & Osborne: 92% automation)
+else if (title.match(/insurance.*agent|insurance.*sales/)) {
+    taskComp.routineCog = 74; taskComp.routineMan = 10; taskComp.nonRoutineCog = 20; taskComp.nonRoutineMan = 8;
+}
+// HIGH RISK - Real Estate Agents (Frey & Osborne: 86% automation)
+else if (title.match(/real.*estate.*agent|real.*estate.*broker|property.*agent/)) {
+    taskComp.routineCog = 62; taskComp.routineMan = 12; taskComp.nonRoutineCog = 32; taskComp.nonRoutineMan = 15;
+}
+// HIGH RISK - Retail Salespersons (Frey & Osborne: 92% automation)
+else if (title.match(/retail.*sales|sales.*assistant|shop.*assistant|store.*clerk/)) {
+    taskComp.routineCog = 68; taskComp.routineMan = 28; taskComp.nonRoutineCog = 18; taskComp.nonRoutineMan = 15;
+}
+// HIGH RISK - Travel Agents (Frey & Osborne: 99% automation)
+else if (title.match(/travel.*agent|tour.*operator/)) {
+    taskComp.routineCog = 80; taskComp.routineMan = 12; taskComp.nonRoutineCog = 12; taskComp.nonRoutineMan = 8;
+}
+// HIGH RISK - Paralegals (Frey & Osborne: 94% automation)
+else if (title.match(/paralegal|legal.*assistant/)) {
+    taskComp.routineCog = 70; taskComp.routineMan = 6; taskComp.nonRoutineCog = 28; taskComp.nonRoutineMan = 5;
+}
+// HIGH RISK - Administrative Assistants (WEF 2025: 70-78% declining)
+else if (title.match(/administrative.*assistant|office.*assistant|secretary/)) {
+    taskComp.routineCog = 74; taskComp.routineMan = 18; taskComp.nonRoutineCog = 16; taskComp.nonRoutineMan = 10;
+}
+// HIGH-MEDIUM RISK - Customer Service (McKinsey: 54-62% automation)
+else if (title.match(/customer.*service|call.*center|support.*specialist|helpdesk/)) {
+    taskComp.routineCog = 64; taskComp.routineMan = 12; taskComp.nonRoutineCog = 30; taskComp.nonRoutineMan = 10;
+}
+// MEDIUM-HIGH RISK - Warehouse Workers (OECD: 82-88% automation)
+else if (title.match(/warehouse|stock.*clerk|loader|material.*handler|freight.*handler/)) {
+    taskComp.routineCog = 32; taskComp.routineMan = 80; taskComp.nonRoutineCog = 12; taskComp.nonRoutineMan = 18;
+}
+// MEDIUM RISK - Truck Drivers (Frey & Osborne: 79% automation)
+else if (title.match(/truck.*driver|lorry.*driver|delivery.*driver|heavy.*vehicle/)) {
+    taskComp.routineCog = 42; taskComp.routineMan = 55; taskComp.nonRoutineCog = 20; taskComp.nonRoutineMan = 38;
+}
+// MEDIUM RISK - Bus/Taxi Drivers (Frey & Osborne: 89% automation)
+else if (title.match(/bus.*driver|taxi.*driver|cab.*driver|chauffeur/)) {
+    taskComp.routineCog = 48; taskComp.routineMan = 52; taskComp.nonRoutineCog = 24; taskComp.nonRoutineMan = 35;
+}
+// MEDIUM RISK - Security Guards (Frey & Osborne: 84% automation)
+else if (title.match(/security.*guard|security.*officer|watchman/)) {
+    taskComp.routineCog = 52; taskComp.routineMan = 54; taskComp.nonRoutineCog = 22; taskComp.nonRoutineMan = 38;
+}
+// MEDIUM RISK - Machinists (OECD: 65% automation)
+else if (title.match(/machinist|machine.*operator|tool.*maker|die.*maker/)) {
+    taskComp.routineCog = 35; taskComp.routineMan = 58; taskComp.nonRoutineCog = 38; taskComp.nonRoutineMan = 48;
+}
+// MEDIUM RISK - Welders (Frey & Osborne: 78% automation)
+else if (title.match(/welder|solderer|brazer/)) {
+    taskComp.routineCog = 32; taskComp.routineMan = 62; taskComp.nonRoutineCog = 34; taskComp.nonRoutineMan = 45;
+}
+// MEDIUM RISK - Carpenters (Frey & Osborne: 72% automation)
+else if (title.match(/carpenter|joiner|cabinet.*maker/)) {
+    taskComp.routineCog = 28; taskComp.routineMan = 54; taskComp.nonRoutineCog = 42; taskComp.nonRoutineMan = 55;
+}
+// MEDIUM-LOW RISK - Electricians (Frey & Osborne: 15% automation)
+else if (title.match(/electrician|electrical.*technician|lineman/)) {
+    taskComp.routineCog = 22; taskComp.routineMan = 35; taskComp.nonRoutineCog = 54; taskComp.nonRoutineMan = 68;
+}
+// MEDIUM-LOW RISK - Plumbers (Frey & Osborne: 16% automation)
+else if (title.match(/plumber|pipe.*fitter|steam.*fitter/)) {
+    taskComp.routineCog = 20; taskComp.routineMan = 32; taskComp.nonRoutineCog = 50; taskComp.nonRoutineMan = 72;
+}
+// MEDIUM-LOW RISK - HVAC Technicians (Frey & Osborne: 19% automation)
+else if (title.match(/hvac|heating.*cooling|air.*conditioning.*mechanic/)) {
+    taskComp.routineCog = 24; taskComp.routineMan = 38; taskComp.nonRoutineCog = 48; taskComp.nonRoutineMan = 65;
+}
+// MEDIUM-LOW RISK - Mechanics (Frey & Osborne: 40-59% varies by type)
+else if (title.match(/mechanic|automotive.*technician|maintenance.*technician/)) {
+    taskComp.routineCog = 28; taskComp.routineMan = 44; taskComp.nonRoutineCog = 46; taskComp.nonRoutineMan = 58;
+}
+// MEDIUM-LOW RISK - Civil Engineers (Frey & Osborne: 18% automation)
+else if (title.match(/civil.*engineer|structural.*engineer/)) {
+    taskComp.routineCog = 30; taskComp.routineMan = 10; taskComp.nonRoutineCog = 68; taskComp.nonRoutineMan = 20;
+}
+// MEDIUM-LOW RISK - Mechanical Engineers (Frey & Osborne: 11% automation)
+else if (title.match(/mechanical.*engineer/)) {
+    taskComp.routineCog = 28; taskComp.routineMan = 8; taskComp.nonRoutineCog = 72; taskComp.nonRoutineMan = 18;
+}
+// MEDIUM-LOW RISK - Software Developers (McKinsey: 25-35% task automation)
+else if (title.match(/software.*developer|software.*engineer|programmer/)) {
+    taskComp.routineCog = 32; taskComp.routineMan = 4; taskComp.nonRoutineCog = 75; taskComp.nonRoutineMan = 8;
+}
+// MEDIUM-LOW RISK - Web Developers (WEF: Growing demand)
+else if (title.match(/web.*developer|front.*end|back.*end|full.*stack/)) {
+    taskComp.routineCog = 35; taskComp.routineMan = 4; taskComp.nonRoutineCog = 70; taskComp.nonRoutineMan = 8;
+}
+// MEDIUM-LOW RISK - Graphic Designers (WEF: 45% task automation)
+else if (title.match(/graphic.*designer|visual.*designer/)) {
+    taskComp.routineCog = 38; taskComp.routineMan = 8; taskComp.nonRoutineCog = 68; taskComp.nonRoutineMan = 15;
+}
+// LOW-MEDIUM RISK - Architects (Frey & Osborne: 1.8% automation)
+else if (title.match(/\barchitect\b|architectural.*designer/)) {
+    taskComp.routineCog = 18; taskComp.routineMan = 6; taskComp.nonRoutineCog = 82; taskComp.nonRoutineMan = 20;
+}
+// LOW-MEDIUM RISK - Marketing Managers (OECD: 22% automation)
+else if (title.match(/marketing.*manager|marketing.*director/)) {
+    taskComp.routineCog = 28; taskComp.routineMan = 5; taskComp.nonRoutineCog = 72; taskComp.nonRoutineMan = 15;
+}
+// LOW-MEDIUM RISK - Sales Managers (Frey & Osborne: 1.3% automation)
+else if (title.match(/sales.*manager|business.*development.*manager/)) {
+    taskComp.routineCog = 22; taskComp.routineMan = 5; taskComp.nonRoutineCog = 75; taskComp.nonRoutineMan = 25;
+}
+// LOW-MEDIUM RISK - HR Managers (OECD: 25% automation)
+else if (title.match(/\bhr.*manager\b|human.*resource.*manager|personnel.*manager/)) {
+    taskComp.routineCog = 30; taskComp.routineMan = 5; taskComp.nonRoutineCog = 68; taskComp.nonRoutineMan = 22;
+}
+// LOW-MEDIUM RISK - General Managers (OECD: 22-28% automation)
+else if (title.match(/general.*manager|operations.*manager|\bmanager\b(?!.*assistant)/)) {
+    taskComp.routineCog = 26; taskComp.routineMan = 5; taskComp.nonRoutineCog = 74; taskComp.nonRoutineMan = 18;
+}
+// LOW RISK - Physicians (Frey & Osborne: 0.42% automation)
+else if (title.match(/\bdoctor\b|physician|surgeon|medical.*officer/)) {
+    taskComp.routineCog = 10; taskComp.routineMan = 8; taskComp.nonRoutineCog = 85; taskComp.nonRoutineMan = 88;
+}
+// LOW RISK - Registered Nurses (Frey & Osborne: 0.9% automation)
+else if (title.match(/registered.*nurse|staff.*nurse|nurse.*practitioner/)) {
+    taskComp.routineCog = 15; taskComp.routineMan = 12; taskComp.nonRoutineCog = 75; taskComp.nonRoutineMan = 85;
+}
+// LOW RISK - Therapists (Frey & Osborne: 0.35% automation)
+else if (title.match(/therapist|counselor|psychologist|clinical.*psychologist/)) {
+    taskComp.routineCog = 12; taskComp.routineMan = 8; taskComp.nonRoutineCog = 82; taskComp.nonRoutineMan = 78;
+}
+// LOW RISK - Social Workers (Frey & Osborne: 0.30% automation)
+else if (title.match(/social.*worker|case.*worker|welfare.*officer/)) {
+    taskComp.routineCog = 14; taskComp.routineMan = 10; taskComp.nonRoutineCog = 78; taskComp.nonRoutineMan = 75;
+}
+// LOW RISK - Teachers (Frey & Osborne: 0.44% automation)
+else if (title.match(/\bteacher\b|professor|instructor|educator|lecturer/)) {
+    taskComp.routineCog = 12; taskComp.routineMan = 5; taskComp.nonRoutineCog = 88; taskComp.nonRoutineMan = 72;
+}
+// LOW RISK - Clergy (Frey & Osborne: 0.81% automation)
+else if (title.match(/clergy|priest|minister|rabbi|imam/)) {
+    taskComp.routineCog = 8; taskComp.routineMan = 5; taskComp.nonRoutineCog = 90; taskComp.nonRoutineMan = 68;
+}
+// LOW RISK - Lawyers (Frey & Osborne: 3.5% automation)
+else if (title.match(/\blawyer\b|attorney|advocate|solicitor|barrister/)) {
+    taskComp.routineCog = 18; taskComp.routineMan = 4; taskComp.nonRoutineCog = 86; taskComp.nonRoutineMan = 12;
+}
+// LOW RISK - Scientists/Researchers (Frey & Osborne: 1.8-8% range)
+else if (title.match(/scientist|researcher|research.*fellow|chemist|physicist|biologist/)) {
+    taskComp.routineCog = 20; taskComp.routineMan = 8; taskComp.nonRoutineCog = 82; taskComp.nonRoutineMan = 18;
+}
+// LOW RISK - Chefs (Frey & Osborne: 10% automation)
+else if (title.match(/\bchef\b|head.*cook|sous.*chef|executive.*chef/)) {
+    taskComp.routineCog = 15; taskComp.routineMan = 20; taskComp.nonRoutineCog = 75; taskComp.nonRoutineMan = 80;
+}
+// LOW RISK - Hairdressers (Frey & Osborne: 11% automation)
+else if (title.match(/hairdresser|hair.*stylist|barber/)) {
+    taskComp.routineCog = 16; taskComp.routineMan = 22; taskComp.nonRoutineCog = 68; taskComp.nonRoutineMan = 78;
+}
+// LOW RISK - Artists/Performers (Frey & Osborne: 3.8% automation)
+else if (title.match(/\bartist\b|musician|actor|performer|dancer|choreographer/)) {
+    taskComp.routineCog = 10; taskComp.routineMan = 10; taskComp.nonRoutineCog = 92; taskComp.nonRoutineMan = 65;
+}
+// LOW RISK - Writers/Editors (Frey & Osborne: 3.8% automation)
+else if (title.match(/\bwriter\b|author|editor|journalist|content.*creator/)) {
+    taskComp.routineCog = 16; taskComp.routineMan = 5; taskComp.nonRoutineCog = 90; taskComp.nonRoutineMan = 12;
+}
+// LOW RISK - Firefighters (Frey & Osborne: 18% automation)
+else if (title.match(/firefighter|fire.*officer/)) {
+    taskComp.routineCog = 20; taskComp.routineMan = 25; taskComp.nonRoutineCog = 72; taskComp.nonRoutineMan = 85;
+}
+// LOW RISK - Police Officers (Frey & Osborne: 22% automation)
+else if (title.match(/police.*officer|detective|constable|law.*enforcement/)) {
+    taskComp.routineCog = 22; taskComp.routineMan = 28; taskComp.nonRoutineCog = 70; taskComp.nonRoutineMan = 80;
+}
+// DEFAULT - Analyze by keywords for varied scores
 else {
-    // Analyze job title for keywords to assign more varied scores
     if (title.match(/supervisor|foreman|inspector|examiner/)) {
-        taskComp.routineCog = 38; taskComp.routineMan = 42; taskComp.nonRoutineCog = 55; taskComp.nonRoutineMan = 48;
+        taskComp.routineCog = 38; taskComp.routineMan = 42; taskComp.nonRoutineCog = 52; taskComp.nonRoutineMan = 48;
     }
     else if (title.match(/assistant|helper|attendant|operator/)) {
-        taskComp.routineCog = 52; taskComp.routineMan = 58; taskComp.nonRoutineCog = 32; taskComp.nonRoutineMan = 35;
+        taskComp.routineCog = 58; taskComp.routineMan = 62; taskComp.nonRoutineCog = 28; taskComp.nonRoutineMan = 32;
     }
-    else if (title.match(/technician|specialist|analyst/)) {
-        taskComp.routineCog = 35; taskComp.routineMan = 28; taskComp.nonRoutineCog = 62; taskComp.nonRoutineMan = 42;
+    else if (title.match(/technician|specialist/)) {
+        taskComp.routineCog = 35; taskComp.routineMan = 32; taskComp.nonRoutineCog = 58; taskComp.nonRoutineMan = 42;
     }
-    else if (title.match(/consultant|advisor|expert/)) {
-        taskComp.routineCog = 28; taskComp.routineMan = 15; taskComp.nonRoutineCog = 72; taskComp.nonRoutineMan = 25;
+    else if (title.match(/consultant|advisor/)) {
+        taskComp.routineCog = 25; taskComp.routineMan = 12; taskComp.nonRoutineCog = 75; taskComp.nonRoutineMan = 22;
     }
     else if (title.match(/officer|official|administrator/)) {
-        taskComp.routineCog = 48; taskComp.routineMan = 22; taskComp.nonRoutineCog = 48; taskComp.nonRoutineMan = 28;
+        taskComp.routineCog = 48; taskComp.routineMan = 20; taskComp.nonRoutineCog = 45; taskComp.nonRoutineMan = 25;
+    }
+    else if (title.match(/director|executive|chief/)) {
+        taskComp.routineCog = 22; taskComp.routineMan = 6; taskComp.nonRoutineCog = 78; taskComp.nonRoutineMan = 18;
     }
     else {
-        taskComp.routineCog = 45; taskComp.routineMan = 35; taskComp.nonRoutineCog = 45; taskComp.nonRoutineMan = 38;
+        taskComp.routineCog = 45; taskComp.routineMan = 40; taskComp.nonRoutineCog = 45; taskComp.nonRoutineMan = 38;
     }
 }
             
