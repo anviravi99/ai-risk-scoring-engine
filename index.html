@@ -138,11 +138,13 @@ const bottlenecks = {
 };
 
 // DIRECT calculation from task composition - more varied results
-// Use weighted bottleneck method (Frey & Osborne original)
-let baseProb = 0;
-for (let k in bottlenecks) baseProb += bottlenecks[k].score * bottlenecks[k].weight;
+const routineScore = (taskComp.routineCog * 0.6) + (taskComp.routineMan * 0.4);
+const creativePenalty = taskComp.nonRoutineCog * 0.3;
+const manualPenalty = taskComp.nonRoutineMan * 0.2;
+const socialScore = bottlenecks.social.score * 0.3;
+const baseProb = Math.max(10, (routineScore - creativePenalty - manualPenalty + socialScore));
 
-const wefAdjusted = Math.max(8, baseProb * 0.86);
+const wefAdjusted = baseProb * 0.86;
             
             // PERSONAL MODIFIERS
             const mods = { edu: 1.0, age: 1.0, exp: 1.0, level: 1.0, eduPts: 0, agePts: 0, expPts: 0, levelPts: 0 };
@@ -205,114 +207,22 @@ const wefAdjusted = Math.max(8, baseProb * 0.86);
             ];
             
             const strategies = [];
-
-// DYNAMIC JOB-SPECIFIC ANALYSIS
-const jobTitle = job.title;
-const riskCategory = finalScore >= 70 ? 'critical' : finalScore >= 50 ? 'high' : finalScore >= 30 ? 'moderate' : 'low';
-
-// Analyze what makes THIS job risky
-const topRisk = taskComp.routineCog > taskComp.routineMan ? 'routine cognitive' : 'routine manual';
-const topStrength = taskComp.nonRoutineCog > taskComp.nonRoutineMan ? 'analytical/creative' : 'dexterity/physical';
-const socialLevel = 100 - bottlenecks.social.score;
-
-// STRATEGY 1: Job-specific risk mitigation
-if (taskComp.routineCog > 50) {
-    // Find adjacent roles with lower routine cognitive
-    const adjacentRoles = taskComp.routineCog > 70 ? 
-        `${jobTitle} → Consider transitioning to: ${
-            title.includes('clerk') ? 'Office Manager, Executive Assistant, Client Relations Specialist' :
-            title.includes('data entry') ? 'Data Analyst, Business Analyst, Database Administrator' :
-            title.includes('bookkeeping') ? 'Financial Analyst, Budget Manager, Treasury Specialist' :
-            title.includes('cashier') ? 'Sales Associate, Customer Success Manager, Retail Manager' :
-            title.includes('receptionist') ? 'Office Coordinator, HR Assistant, Administrative Manager' :
-            'Supervisor, Team Lead, Process Improvement Specialist'
-        } - These roles reduce routine work by 30-50% while leveraging your domain knowledge.` :
-        `Your ${taskComp.routineCog}% routine cognitive work can be augmented. Learn: RPA tools (UiPath, Automation Anywhere), advanced Excel/Power BI, or SQL to become the automation controller.`;
-    strategies.push(adjacentRoles);
-}
-
-if (taskComp.routineMan > 50) {
-    const manualStrategy = title.includes('assembler') || title.includes('packer') ? 
-        `Manufacturing automation is accelerating. Pivot options: (1) Robotics Technician - maintain/program the robots (2) Quality Inspector - judgment-based role (3) Production Supervisor - oversee automated+human teams. Trade schools offer 6-12 month programs ($3K-8K) with 85%+ job placement.` :
-        title.includes('driver') ?
-        `Autonomous vehicles are 5-10 years out. Prepare now: (1) Last-mile delivery specialization (complex environments) (2) Fleet management (oversee autonomous + human drivers) (3) Logistics coordinator (route optimization, exceptions). CDL + logistics certification = competitive advantage.` :
-        `Your hands-on skills are valuable but routine portions face automation. Specialize in: (1) Complex repairs/troubleshooting (2) Custom installations (3) Maintenance of automated systems. Certifications in your trade + new tech = 40-60% higher pay.`;
-    strategies.push(manualStrategy);
-}
-
-// STRATEGY 2: Leverage strengths
-if (taskComp.nonRoutineCog > 60) {
-    strategies.push(`STRENGTH: Your ${taskComp.nonRoutineCog}% creative/analytical work is highly defensible. ${
-        title.includes('engineer') || title.includes('developer') ? 
-        'Focus on: (1) System architecture vs coding (2) Cross-functional leadership (3) AI model training/fine-tuning for your domain. Become the person who decides WHAT to build.' :
-        title.includes('manager') || title.includes('director') ?
-        'Double down on: (1) Strategic planning (2) Stakeholder management (3) Change leadership. AI handles analysis; you handle judgment + relationships.' :
-        title.includes('designer') || title.includes('architect') ?
-        'AI is a tool, not replacement. Master: (1) AI-assisted design (Midjourney + your expertise) (2) Client consultation (understanding unstated needs) (3) Concept development. Speed increases 3x, creativity remains human.' :
-        'Your analytical edge is your moat. Build expertise in: (1) Complex problem-solving (2) Cross-domain synthesis (3) Strategic thinking. Document case studies of your work.'
-    }`);
-}
-
-// STRATEGY 3: Social intelligence plays
-if (socialLevel > 50) {
-    strategies.push(`HUMAN CONNECTION (${socialLevel}% social intelligence): ${
-        title.includes('nurse') || title.includes('therapist') || title.includes('teacher') ?
-        'Your empathy is irreplaceable. Expand: (1) Specialized care (geriatric, mental health, special needs) (2) Care coordination (navigate systems FOR patients) (3) Training/mentorship. These command 30-50% premiums.' :
-        title.includes('sales') || title.includes('account') ?
-        'Relationship-building is your superpower. Level up: (1) Strategic account management (C-suite relationships) (2) Consultative selling (solve problems, not push products) (3) Partner ecosystem development. High-touch sales growing despite AI.' :
-        'You have strong interpersonal skills. Monetize through: (1) Client-facing roles (2) Team leadership (3) Negotiation/mediation (4) Training & development. These roles show 15-25% lower automation risk.'
-    }`);
-}
-
-// STRATEGY 4: Education/Age/Experience personalized
-const eduStrategy = profile.education === 'highschool' && finalScore > 50 ?
-    `EDUCATION ROI: ${jobTitle} + certification could reduce your risk by 20-30 points. Best ROI options: ${
-        taskComp.routineCog > 50 ? 'Google Data Analytics ($39/mo, 6 months) → Data Analyst roles ($65K avg)' :
-        taskComp.routineMan > 50 ? 'AWS Cloud Practitioner ($100 exam, 3 months study) → Cloud Support ($55K avg)' :
-        'Project Management Professional (PMP) ($405 exam, 6 months) → Project Coordinator ($60K avg)'
-    }. Payment plans available. 85% see ROI within 18 months.` :
-    profile.education === 'postgraduate' && finalScore > 40 ?
-    `You're overqualified for high-risk tasks. Target: ${
-        title.includes('assistant') || title.includes('coordinator') ? 'Manager, Director, or Specialist roles using your advanced degree' :
-        'Strategic, advisory, or research positions'
-    }. Your network (alumni, LinkedIn) is key - 70% of $80K+ jobs aren't posted publicly.` :
-    null;
-
-if (eduStrategy) strategies.push(eduStrategy);
-
-const ageExpStrategy = (parseInt(profile.age) > 50 && parseInt(profile.experience) > 20) ?
-    `EXPERIENCE LEVERAGE (${profile.experience}+ years): Your institutional knowledge is gold. Options: (1) Internal consultant role (guide digital transformation) (2) External consulting ($150-300/hr rates) (3) Board advisor positions (4) Create online course packaging your expertise (passive income). Don't compete on speed—compete on wisdom.` :
-    (parseInt(profile.age) < 30) ?
-    `TECH-NATIVE EDGE: You adapt fastest to AI. Action plan: (1) Become the 'AI expert' in your current role (volunteer for pilot projects) (2) Build portfolio of AI-enhanced work (3) Network in AI-forward companies (4) Side projects using GPT-4/Claude API. Position yourself as bridge between old and new.` :
-    null;
-
-if (ageExpStrategy) strategies.push(ageExpStrategy);
-
-// STRATEGY 5: Urgency-based timeline
-const timeline = riskCategory === 'critical' ?
-    `⏰ 90-DAY SPRINT: Week 1-2: (1) Skills audit - what's transferable? (2) Research 10 target roles (3) Join 3 industry communities. Week 3-6: (1) Update LinkedIn + resume (2) 20 informational interviews (3) Start ONE skill course. Week 7-12: (1) Apply 5 jobs/week (2) Complete certification (3) Freelance/volunteer in target field. Day 90: You should have new opportunities or clear path.` :
-    riskCategory === 'high' ?
-    `📅 12-MONTH ROADMAP: Q1: Deep research phase - identify 3 target roles, talk to 10 people in those roles, assess skills gap. Q2: Skills acquisition - dedicate 5 hrs/week to learning, get 1 certification. Q3: Visibility building - share learnings on LinkedIn, internal projects at work. Q4: Active transition - applications, interviews, negotiations. Goal: New role or clear promotion path by month 12.` :
-    riskCategory === 'moderate' ?
-    `📊 AI AUGMENTATION PLAN: (1) Month 1-3: Identify 3 AI tools for your role, achieve 20% efficiency gain (2) Month 4-6: Propose AI-enhanced process to management (3) Month 7-9: Train team on AI tools, position as innovation leader (4) Month 10-12: Leverage wins for promotion/raise. Track everything - metrics matter.` :
-    `✅ OPTIMIZATION MODE: (1) Maintain excellence in core role (2) Develop one adjacent specialization (3) Build thought leadership (blog, speaking) (4) Explore entrepreneurial options (your expertise + AI tools = scalable business). You're well-positioned - focus on growth, not survival.`;
-
-strategies.push(timeline);
-
-// STRATEGY 6: Specific resources based on profile
-const resources = `SPECIFIC RESOURCES FOR YOU: ${
-    taskComp.routineCog > 50 ? '• Coursera: "IBM Data Analyst Professional" • DataCamp: SQL fundamentals • ' : ''
-}${
-    taskComp.routineMan > 50 ? '• Local community college: PLC/Robotics courses • YouTube: "CNC Programming Basics" • ' : ''
-}${
-    finalScore > 60 ? '• SkillBridge (veterans): Free transition training • DislocatedWorker.com: Government retraining funds • ' : ''
-}${
-    parseInt(profile.age) < 30 ? '• YC Startup School (free): Build side business • Pioneer.app: Accountability for projects • ' : ''
-}${
-    parseInt(profile.age) > 50 ? '• AARP Foundation: Career tools 50+ • Wahve.com: Remote work for experienced professionals • ' : ''
-}• CareerOneStop.org: Skills matching • LinkedIn Learning: 1-month free trial • ${jobTitle} professional associations for networking.`;
-
-strategies.push(resources);
+            if (mods.eduPts > 3) strategies.push("Education Priority: Pursue additional qualifications in high-demand fields. Higher education reduces automation risk by 25-35%.");
+            else if (mods.eduPts < -8) strategies.push("Leverage Advanced Education: Position yourself in strategic/advisory roles where you guide AI implementation.");
+            else strategies.push("Continuous Upskilling: Regular skill updates reduce displacement risk by 40%.");
+            
+            if (mods.agePts > 6) strategies.push("Experience as Asset: Focus on mentoring, training, quality assurance where years of expertise provide irreplaceable value.");
+            else if (mods.agePts < -5) strategies.push("Digital Native Advantage: Early adopt AI tools. Be the bridge between traditional expertise and emerging tech.");
+            else strategies.push("Balanced Approach: Combine accumulated expertise with strategic technology adoption.");
+            
+            if (finalScore >= 65) strategies.push("Urgent Action (3-6 months): Develop concrete transition plan immediately. Early movers have 3x better outcomes.");
+            else if (finalScore >= 45) strategies.push("Strategic Planning (6-18 months): Focus on skills AI can't replicate: complex communication, leadership, creativity.");
+            else if (finalScore >= 25) strategies.push("AI Collaboration: Master AI tools for 30-50% productivity gains and improved job security.");
+            else strategies.push("Strategic Enhancement: Leverage AI for administrative tasks, focus on uniquely human high-value work.");
+            
+            if (mods.levelPts > 8) strategies.push("Career Advancement Critical: Moving up 1-2 levels reduces automation risk by 30-40% (McKinsey 2023).");
+            
+            const rationale = `YOUR RISK: ${finalScore}/100 - ${riskLevel}
 
 METHODOLOGY:
 Multi-stage model using Frey & Osborne (Oxford 2013), WEF 2025, OECD 2023, McKinsey 2024
