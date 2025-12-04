@@ -291,11 +291,13 @@ const bottlenecks = {
     }
 };
 
+// DIRECT calculation from task composition - more varied results
 const routineScore = (taskComp.routineCog * 0.6) + (taskComp.routineMan * 0.4);
 const creativePenalty = taskComp.nonRoutineCog * 0.3;
 const manualPenalty = taskComp.nonRoutineMan * 0.2;
 const socialScore = bottlenecks.social.score * 0.3;
 const baseProb = Math.max(10, (routineScore - creativePenalty - manualPenalty + socialScore));
+
 const wefAdjusted = baseProb * 0.86;
             
             // PERSONAL MODIFIERS
