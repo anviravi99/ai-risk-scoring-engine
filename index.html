@@ -291,12 +291,30 @@ const bottlenecks = {
     }
 };
 
-// DIRECT calculation from task composition - more varied results
-const routineScore = (taskComp.routineCog * 0.6) + (taskComp.routineMan * 0.4);
-const creativePenalty = taskComp.nonRoutineCog * 0.3;
-const manualPenalty = taskComp.nonRoutineMan * 0.2;
-const socialScore = bottlenecks.social.score * 0.3;
-const baseProb = Math.max(10, (routineScore - creativePenalty - manualPenalty + socialScore));
+// Frey & Osborne weighted bottleneck methodology
+const bottlenecks = {
+    perception: { score: (100 - taskComp.nonRoutineMan), weight: 0.28 },
+    creativity: { score: (100 - taskComp.nonRoutineCog), weight: 0.42 },
+    social: { 
+        score: title.match(/nurse|therapist|counselor|teacher|social.*worker|clergy/) ? 12 :
+               title.match(/doctor|physician|psychologist/) ? 15 :
+               title.match(/manager|director|executive|sales.*manager/) ? 25 :
+               title.match(/customer.*service|sales.*assistant|waiter|receptionist/) ? 45 :
+               title.match(/hairdresser|chef|personal/) ? 30 :
+               title.match(/lawyer|consultant|advisor/) ? 35 :
+               title.match(/data.*entry|clerk|assembler|packer|teller|cashier|bookkeeping/) ? 88 :
+               title.match(/driver|operator|machinist|security/) ? 62 :
+               title.match(/scientist|researcher|engineer/) ? 25 :
+               title.match(/artist|designer|writer/) ? 22 : 55,
+        weight: 0.30 
+    }
+};
+
+// Calculate base probability
+let baseProb = 0;
+for (let k in bottlenecks) {
+    baseProb += bottlenecks[k].score * bottlenecks[k].weight;
+}
 
 const wefAdjusted = baseProb * 0.86;
             
