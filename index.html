@@ -358,11 +358,11 @@ const wefAdjusted = Math.max(8, baseProb * 0.86);
                 "Frey & Osborne: <10% computerization probability"
             ];
             
-            const strategies = [];
+           const strategies = [];
 
 // Get job context
 const jobTitle = job.title;
-const userAge = parseInt(profile.age) || 0;
+const age = parseInt(profile.age) || 0;
 const exp = parseInt(profile.experience) || 0;
 const edu = profile.education;
 
@@ -462,7 +462,7 @@ if (finalScore >= 70) {
     strategies.push(`⏰ YOUR TIMELINE: ${immediateAction}`);
     
 } else if (finalScore >= 45 && finalScore < 70) {
-    strategies.push(`📅 12-18 MONTH PROACTIVE TRANSITION: You have time to do this right. Don't panic, but don't ignore it. Quarter 1 (Months 1-3): Deep research. Identify 3-5 adjacent roles with <35 risk scores. Use LinkedIn to find 15-20 people who made similar transitions. Message them: "I'm a ${jobTitle} looking to transition to [target role]. Would you be willing to share your story?" 70-80% will respond positively. Learn: What skills mattered most? What do they wish they'd known? What's the day-to-day actually like? Quarter 2-3 (Months 4-9): Build the #1 skill gap. Dedicate 5-7 hours per week = 130-180 hours total = enough for most certifications. Create proof of capability: portfolio projects, GitHub contributions, Medium articles, LinkedIn posts. Inside current job: Volunteer for anything related to target role. Quarter 4-6 (Months 10-18): Active transition. Apply to 3-5 jobs per week, quality over quantity. Leverage your network from Q1 research. Most jobs filled through referrals at your level. Advantage of planning ahead: You can be selective. You're not desperate. You transition from strength, not weakness.`);
+    strategies.push(`📅 12-18 MONTH PROACTIVE TRANSITION: You have time to do this right. Don't panic, but don't ignore it. Quarter 1 (Months 1-3): Deep research. Identify 3-5 adjacent roles with <35 risk scores. Use LinkedIn to find 15-20 people who made similar transitions. Message them: "I'm a ${jobTitle} looking to transition to ${target role}. Would you be willing to share your story?" 70-80% will respond positively. Learn: What skills mattered most? What do they wish they'd known? What's the day-to-day actually like? Quarter 2-3 (Months 4-9): Build the #1 skill gap. Dedicate 5-7 hours per week = 130-180 hours total = enough for most certifications. Create proof of capability: portfolio projects, GitHub contributions, Medium articles, LinkedIn posts. Inside current job: Volunteer for anything related to target role. Quarter 4-6 (Months 10-18): Active transition. Apply to 3-5 jobs per week, quality over quantity. Leverage your network from Q1 research. Most jobs filled through referrals at your level. Advantage of planning ahead: You can be selective. You're not desperate. You transition from strength, not weakness.`);
     
 } else {
     const optimizationFocus = primaryStrength.type === 'analytical' ?
@@ -483,7 +483,6 @@ if (age > 50 && finalScore > 55) {
 
 // 6. REAL TALK CONCLUSION
 strategies.push(`REAL TALK: This ${finalScore} score is a forecast, not destiny. It assumes: (1) Current automation trends continue, (2) Your role stays static, (3) You don't adapt. Change any of those, the score changes. What matters: (1) How fast is YOUR specific employer adopting automation? (Large companies move faster than small); (2) How specialized are you? (Specialists always safer than generalists); (3) Are you building skills or coasting? The people who get displaced are those who ignore the signals. You're here, reading this - that puts you ahead. Take ONE action this week. Not three. ONE. Research one certification, message one person in a target role, update one section of LinkedIn. Momentum beats perfection.`);
-
 const rationale = `YOUR RISK: ${finalScore}/100 - ${riskLevel}
 METHODOLOGY:
 Multi-stage model using Frey & Osborne (Oxford 2013), WEF 2025, OECD 2023, McKinsey 2024
