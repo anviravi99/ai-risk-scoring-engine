@@ -296,29 +296,26 @@ const bottlenecks = {
     perception: { score: (100 - taskComp.nonRoutineMan), weight: 0.28 },
     creativity: { score: (100 - taskComp.nonRoutineCog), weight: 0.42 },
     social: { 
-        score: (100 - taskComp.nonRoutineMan * 0.3 - taskComp.nonRoutineCog * 0.2 - 
-                (title.match(/nurse|therapist|counselor|teacher|social.*worker|clergy/) ? 70 :
-                 title.match(/doctor|physician|psychologist/) ? 65 :
-                 title.match(/manager|director|executive/) ? 60 :
-                 title.match(/customer.*service|sales.*assistant/) ? 45 :
-                 title.match(/hairdresser|chef/) ? 55 :
-                 title.match(/lawyer|consultant/) ? 50 :
-                 title.match(/data.*entry|clerk|teller|cashier/) ? 5 :
-                 title.match(/accountant|auditor/) ? 25 :
-                 title.match(/assembler|packer/) ? 8 :
-                 title.match(/driver|operator/) ? 20 :
-                 title.match(/scientist|researcher|engineer/) ? 50 :
-                 title.match(/artist|designer|writer/) ? 55 : 35)),
+        score: title.match(/nurse|therapist|counselor|teacher|social worker|clergy/) ? 15 :
+               title.match(/doctor|physician|psychologist/) ? 18 :
+               title.match(/manager|executive|director|sales.*manager/) ? 25 :
+               title.match(/customer service|sales assistant|waiter|receptionist/) ? 45 :
+               title.match(/hairdresser|chef|personal/) ? 30 :
+               title.match(/lawyer|consultant|advisor/) ? 35 :
+               title.match(/data entry|clerk|assembler|packer/) ? 85 :
+               title.match(/driver|operator|machinist/) ? 65 : 
+               title.match(/scientist|researcher|engineer/) ? 28 :
+               title.match(/artist|designer|writer/) ? 25 :
+               title.match(/supervisor|inspector/) ? 50 : 58,
         weight: 0.30 
     }
 };
 
 // Calculate base probability
-let baseProb = (bottlenecks.perception.score * 0.28) + 
-               (bottlenecks.creativity.score * 0.42) + 
-               (bottlenecks.social.score * 0.30);
+let baseProb = (bottlenecks.perception.score * bottlenecks.perception.weight) + 
+               (bottlenecks.creativity.score * bottlenecks.creativity.weight) + 
+               (bottlenecks.social.score * bottlenecks.social.weight);
 
-// Ensure minimum of 15
 const wefAdjusted = Math.max(15, baseProb * 0.86);
             
             // PERSONAL MODIFIERS
