@@ -291,14 +291,14 @@ const bottlenecks = {
     }
 };
 
-// FIXED: Proper Frey & Osborne calculation
-const routineScore = (taskComp.routineCog * 0.70) + (taskComp.routineMan * 0.30);
-const skillPenalty = (taskComp.nonRoutineCog * 0.45) + (taskComp.nonRoutineMan * 0.35);
-const socialImpact = bottlenecks.social.score * 0.20;
+// DIRECT calculation from task composition - more varied results
+const routineScore = (taskComp.routineCog * 0.6) + (taskComp.routineMan * 0.4);
+const creativePenalty = taskComp.nonRoutineCog * 0.3;
+const manualPenalty = taskComp.nonRoutineMan * 0.2;
+const socialScore = bottlenecks.social.score * 0.3;
+const baseProb = Math.max(10, (routineScore - creativePenalty - manualPenalty + socialScore));
 
-// Formula: High routine = high risk, High skills = lower risk, High social needs = lower risk
-const baseProb = Math.max(8, Math.min(95, routineScore - skillPenalty + socialImpact));
-const wefAdjusted = baseProb * 0.88;
+const wefAdjusted = baseProb * 0.86;
             
             // PERSONAL MODIFIERS
             const mods = { edu: 1.0, age: 1.0, exp: 1.0, level: 1.0, eduPts: 0, agePts: 0, expPts: 0, levelPts: 0 };
